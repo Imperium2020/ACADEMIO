@@ -8,6 +8,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class MainMenu extends AppCompatActivity {
 
 
@@ -22,8 +25,16 @@ public class MainMenu extends AppCompatActivity {
         tabLayout = findViewById(R.id.tabs);
         viewPager.setAdapter(createMenuAdapter());
 
+        List<String> titles = Arrays.asList("Materials", "Attendance", "Chat");
+
         new TabLayoutMediator(tabLayout, viewPager,
-                (tab, position) -> tab.setText("Tab " + (position + 1))).attach();
+                (tab, position) -> {
+                    if (titles.size() > position)
+                        tab.setText(titles.get(position));
+                    else
+                        tab.setText("Future Feature");
+                }).attach();
+
     }
 
 

@@ -16,7 +16,7 @@ public class MainMenuFragmentAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         switch (position) {
-            case 0: return TemplateFragment.newInstance();
+            case 0: return Material.newInstance();
             default: return TemplateFragment.newInstance("Whoops! Future Feature!");
         }
     }
