@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "315729962049",
+    "firebase_url": "https://academio-41c12.firebaseio.com",
+    "project_id": "academio-41c12",
+    "storage_bucket": "academio-41c12.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:315729962049:android:1385746205e89f50a5d2c0",
+        "android_client_info": {
+          "package_name": "com.imperium.academio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "315729962049-clejb2ks9sloi74rvu9gp4jfjmc909is.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAb-CwZS6jBYi0vosQP3AYIWPMIql6iMTk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "315729962049-clejb2ks9sloi74rvu9gp4jfjmc909is.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
