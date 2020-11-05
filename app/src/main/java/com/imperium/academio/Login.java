@@ -17,13 +17,12 @@ public class Login extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_login);
 
-        callSignUp = findViewById(R.id.signup_screen);
+        callSignUp = findViewById(R.id.btn_material);
         callSignUp.setOnClickListener(view -> {
-            Intent intent = new Intent(Login.this, SignUp.class);
+            Intent intent = new Intent(Login.this, StudentAttendance.class);
             startActivity(intent);
         });
-
-        callMaterial = findViewById(R.id.btn_material);
+        callMaterial = findViewById(R.id.signup_screen);
         callMaterial.setOnClickListener(view -> {
             Intent intent = new Intent(Login.this, MainMenu.class);
             startActivity(intent);
