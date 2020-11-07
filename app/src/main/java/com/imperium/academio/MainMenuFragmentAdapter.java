@@ -15,7 +15,10 @@ public class MainMenuFragmentAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        return MainMenuFragment.newInstance(position);
+        switch (position) {
+            case 0: return TemplateFragment.newInstance();
+            default: return TemplateFragment.newInstance("Whoops! Future Feature!");
+        }
     }
 
     @Override

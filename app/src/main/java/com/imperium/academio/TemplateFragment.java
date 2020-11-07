@@ -4,24 +4,28 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-public class MainMenuFragment extends Fragment {
+public class TemplateFragment extends Fragment {
 
-    private static final String ARG_COUNT = "param1";
-    private Integer counter;
+    private static final String MSG = "param1";
+    private String msg;
 
-    public MainMenuFragment() {
+    public TemplateFragment() {
         // Required empty public constructor
     }
+    public static TemplateFragment newInstance() {
+        return new TemplateFragment();
+    }
 
-    public static MainMenuFragment newInstance(Integer counter) {
-        MainMenuFragment fragment = new MainMenuFragment();
+    public static TemplateFragment newInstance(String m) {
+        TemplateFragment fragment = new TemplateFragment();
         Bundle args = new Bundle();
-        args.putInt(ARG_COUNT, counter);
+        args.putString(MSG, m);
         fragment.setArguments(args);
         return fragment;
     }
@@ -30,7 +34,10 @@ public class MainMenuFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            counter = getArguments().getInt(ARG_COUNT);
+            msg = getArguments().getString(MSG);
+        }
+        else {
+            msg = "Hello World";
         }
     }
 
@@ -38,7 +45,10 @@ public class MainMenuFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.template_fragment, container, false);
+        View v = inflater.inflate(R.layout.template_fragment, container, false);
+        TextView t = v.findViewById(R.id.tv_counter);
+        t.setText(msg);
+        return  v;
     }
 
     @Override
