@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainMenu extends AppCompatActivity {
-
+    private final List<String> titles = Arrays.asList("Materials", "Attendance", "(temp)", "Chat");
 
     TabLayout tabLayout;
     ViewPager2 viewPager;
@@ -25,7 +25,7 @@ public class MainMenu extends AppCompatActivity {
         tabLayout = findViewById(R.id.tabs);
         viewPager.setAdapter(createMenuAdapter());
 
-        List<String> titles = Arrays.asList("Materials", "Attendance", "Chat");
+
 
         new TabLayoutMediator(tabLayout, viewPager,
                 (tab, position) -> {
@@ -39,6 +39,6 @@ public class MainMenu extends AppCompatActivity {
 
 
     private MainMenuFragmentAdapter createMenuAdapter() {
-        return new MainMenuFragmentAdapter(this);
+        return new MainMenuFragmentAdapter(this, titles.size());
     }
 }
