@@ -1,5 +1,6 @@
 package com.imperium.academio;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.imperium.academio.ui.adapters.MainMenuFragmentAdapter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -17,6 +19,7 @@ public class MainMenu extends AppCompatActivity {
     TabLayout tabLayout;
     ViewPager2 viewPager;
 
+    @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,6 +27,7 @@ public class MainMenu extends AppCompatActivity {
         viewPager = findViewById(R.id.view_pager);
         tabLayout = findViewById(R.id.tabs);
         viewPager.setAdapter(createMenuAdapter());
+        viewPager.setUserInputEnabled(false);
 
 
 

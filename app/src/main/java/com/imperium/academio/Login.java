@@ -24,7 +24,7 @@ public class Login extends AppCompatActivity {
         });
         callSignUp = findViewById(R.id.signup_screen);
         callSignUp.setOnClickListener(view -> {
-            Intent intent = new Intent(Login.this, SignUp.class);
+            Intent intent = new Intent(Login.this, Register.class);
             startActivity(intent);
         });
     }
