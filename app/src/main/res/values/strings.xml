@@ -28,5 +28,6 @@
         <item>SEP</item>
         <item>OCT</item>
         <item>NOV</item>
-        <item>DEC</item></string-array>
+        <item>DEC</item>
+    </string-array>
 </resources>
