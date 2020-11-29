@@ -3,19 +3,19 @@
     package="com.imperium.academio">
 
     <application
-        android:allowBackup="true"
+        android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ClassRegister"></activity>
+        <activity android:name=".ClassRegister" />
         <activity android:name=".MainMenu" />
-        <activity android:name=".SignUp" />
+        <activity android:name=".Register" />
         <activity android:name=".Login" />
         <activity
-            android:name=".MainActivity"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:name=".Splash"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

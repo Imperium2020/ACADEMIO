@@ -1,14 +1,10 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-
-        <!-- Primary brand color. -->
-
-        <!-- Customize your theme here. -->
-
     </style>
-    <style name="Attendance.textview" parent="Widget.MaterialComponents.TextView">
-        <item name="android:background">@color/purple_700</item>
-        <item name="android:gravity">center</item>
+
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:background">@color/black</item>
     </style>
+
 </resources>

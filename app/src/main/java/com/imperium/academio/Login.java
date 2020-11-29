@@ -19,12 +19,12 @@ public class Login extends AppCompatActivity {
 
         callMaterial = findViewById(R.id.btn_material);
         callMaterial.setOnClickListener(view -> {
-            Intent intent = new Intent(Login.this, MainMenu.class);
+            Intent intent = new Intent(Login.this, ClassRegister.class);
             startActivity(intent);
         });
         callSignUp = findViewById(R.id.signup_screen);
         callSignUp.setOnClickListener(view -> {
-            Intent intent = new Intent(Login.this, SignUp.class);
+            Intent intent = new Intent(Login.this, Register.class);
             startActivity(intent);
         });
     }
