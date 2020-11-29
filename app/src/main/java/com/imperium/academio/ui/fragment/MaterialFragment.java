@@ -119,7 +119,7 @@ public class MaterialFragment extends Fragment {
                     topicItems.add(new MaterialTopicRvModel("Module x"));
                     topicRvAdapter.notifyDataSetChanged();
                     topicRvAdapter.setLoaded();
-                }, 4000);
+                }, 2000);
             }
         });
 
@@ -134,7 +134,7 @@ public class MaterialFragment extends Fragment {
                     items.add(new MaterialItemRvModel(R.drawable.note_icon, "Topic x - Subtopic x", "Description"));
                     itemRvAdapter.notifyDataSetChanged();
                     itemRvAdapter.setLoaded();
-                }, 4000);
+                }, 2000);
 
             }
         });

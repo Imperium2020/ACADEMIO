@@ -1,209 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_margin="2dp"
     tools:context=".ClassRegister">
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/class_register_title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:orientation="vertical">
+        android:layout_marginVertical="5dp"
+        android:fontFamily="@font/bungee"
+        android:text="@string/courses"
+        android:textSize="36sp"
+        app:layout_constraintBottom_toTopOf="@+id/class_register"
+        app:layout_constraintEnd_toStartOf="@+id/btn_class_register"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize">
+    <Button
+        android:id="@+id/btn_class_register"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginEnd="30dp"
+        android:background="@drawable/plus"
+        app:layout_constraintBottom_toTopOf="@+id/class_register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/class_register_title"
+        app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
-                android:layout_width="76dp"
-                android:layout_height="match_parent"
-                android:contentDescription="@string/todo"
-                android:padding="15dp"
-                android:src="@drawable/arrow" />
-
-            <ImageView
-                android:layout_width="77dp"
-                android:layout_height="match_parent"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:contentDescription="@string/add_button"
-                android:padding="15dp"
-                android:src="@drawable/plus" />
-
-
-        </RelativeLayout>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="80dp"
-            android:fontFamily="@font/bungee"
-            android:padding="5dp"
-            android:text="COURSES"
-            android:textColor="@color/black"
-            android:textSize="40sp" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:background="@drawable/yellow">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="COURSE 1"
-                android:textSize="30sp"
-                android:fontFamily="@font/montserrat_bold"
-                android:padding="25dp"/>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="SHOW MORE"
-                android:background="#00000000"
-                android:padding="20dp"
-                android:layout_alignParentBottom="true"/>
-
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:src="@drawable/classroom"
-                android:layout_alignParentEnd="true"
-                android:contentDescription="@string/todo" />
-
-
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:background="@drawable/yellow"
-            android:layout_marginTop="20dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_bold"
-                android:padding="25dp"
-                android:text="COURSE 2"
-                android:textSize="30sp" />
-
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="2dp"
-                android:src="@drawable/classroom"
-                android:contentDescription="@string/todo" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="3dp"
-                android:background="#00000000"
-                android:padding="20dp"
-                android:text="SHOW MORE" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:background="@drawable/yellow"
-            android:layout_marginTop="20dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_bold"
-                android:padding="25dp"
-                android:text="COURSE 3"
-                android:textSize="30sp" />
-
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="2dp"
-                android:src="@drawable/classroom"
-                android:contentDescription="@string/todo" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="3dp"
-                android:background="#00000000"
-                android:padding="20dp"
-                android:text="SHOW MORE" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:background="@drawable/yellow"
-            android:layout_marginTop="20dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_bold"
-                android:padding="25dp"
-                android:text="COURSE 4"
-                android:textSize="30sp" />
-
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="2dp"
-                android:src="@drawable/classroom"
-                android:contentDescription="@string/todo" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="3dp"
-                android:background="#00000000"
-                android:padding="20dp"
-                android:text="SHOW MORE" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="150dp"
-            android:background="@drawable/yellow"
-            android:layout_marginTop="20dp">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/montserrat_bold"
-                android:padding="25dp"
-                android:text="COURSE 5"
-                android:textSize="30sp" />
-
-            <ImageView
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_alignParentEnd="true"
-                android:layout_marginEnd="2dp"
-                android:src="@drawable/classroom"
-                android:contentDescription="@string/todo" />
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_marginBottom="3dp"
-                android:background="#00000000"
-                android:padding="20dp"
-                android:text="SHOW MORE" />
-        </RelativeLayout>
-
-
-
-
-
-
-    </LinearLayout>
-
-</ScrollView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/class_register"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/class_register_title"
+        tools:itemCount="3"
+        tools:listitem="@layout/template_class_register_item" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class MainMenu extends AppCompatActivity {
-    private final List<String> titles = Arrays.asList("Materials", "Attendance", "(temp)", "Chat");
+    private final List<String> titles = Arrays.asList("Materials", "Attendance", "(temp)");
 
     TabLayout tabLayout;
     ViewPager2 viewPager;
