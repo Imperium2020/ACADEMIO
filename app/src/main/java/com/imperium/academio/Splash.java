@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 public class Splash extends AppCompatActivity {
 
     // duration of splash
@@ -34,8 +37,12 @@ public class Splash extends AppCompatActivity {
         logo.setAnimation(topAnim);
         new Thread(() -> {
             try {
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 Thread.sleep(SPLASH_SCREEN_DURATION);
-                Intent intent = new Intent(Splash.this, Login.class);
+                Intent intent = new Intent(
+                        Splash.this,
+                        (currentUser == null) ? Login.class : ClassRegister.class
+                );
                 startActivity(intent);
                 finish();
             } catch (Exception e) {

@@ -11,8 +11,12 @@
         android:theme="@style/AppTheme">
         <activity android:name=".ClassRegister" />
         <activity android:name=".MainMenu" />
-        <activity android:name=".Register" />
-        <activity android:name=".Login" />
+        <activity
+            android:name=".Register"
+            android:theme="@style/AuthTheme" />
+        <activity
+            android:name=".Login"
+            android:theme="@style/AuthTheme" />
         <activity
             android:name=".Splash"
             android:theme="@style/SplashTheme">
