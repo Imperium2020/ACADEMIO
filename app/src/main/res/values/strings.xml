@@ -14,7 +14,7 @@
     <string name="already_have_an_account_login">Already have an account? Login</string>
     <string name="register">Register</string>
     <string name="icon">icon image</string>
-    <string name="select_month">Select month:</string>
+    <string name="select_month">Select month: </string>
     <string name="month">month</string>
     <string name="courses">courses</string>
     <string name="login">Sign In</string>
