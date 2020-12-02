@@ -32,6 +32,23 @@
         app:layout_constraintStart_toEndOf="@+id/class_register_title"
         app:layout_constraintTop_toTopOf="parent" />
 
+
+    <Button
+        android:id="@+id/logout"
+        style="@style/FlushedButton" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:layout_margin="5dp"
+        android:text="@string/log_out"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@+id/class_register"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.197"
+        app:layout_constraintStart_toEndOf="@+id/class_register_title"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.491" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/class_register"
         android:layout_width="match_parent"

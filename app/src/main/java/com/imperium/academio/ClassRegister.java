@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.imperium.academio.ui.adapters.ClassRegisterRvAdapter;
 import com.imperium.academio.ui.model.ClassRegisterRvModel;
 
@@ -17,12 +18,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ClassRegister extends AppCompatActivity {
+
+    private FirebaseAuth firebaseAuth;
     Button addClass;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_class_register);
+        firebaseAuth = FirebaseAuth.getInstance();
+        Button lout = (Button) findViewById(R.id.logout);
+        lout.setOnClickListener(view -> {
+            firebaseAuth.signOut();
+            startActivity(new Intent(ClassRegister.this,Login.class));
+            finish();
+        });
         RecyclerView classRv;
         ClassRegisterRvAdapter registerRvAdapter;
 
