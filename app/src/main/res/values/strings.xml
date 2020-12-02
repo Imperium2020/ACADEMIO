@@ -18,6 +18,7 @@
     <string name="month">month</string>
     <string name="courses">courses</string>
     <string name="login">Sign In</string>
+    <string name="log_out">Log Out</string>
     <string-array name="months">
         <item>JAN</item>
         <item>FEB</item>
