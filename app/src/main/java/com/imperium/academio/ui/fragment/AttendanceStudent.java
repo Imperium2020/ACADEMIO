@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Set;
 
 public class AttendanceStudent extends Fragment {
-    FragmentAttendanceStudentBinding layoutBinding;
+    FragmentAttendanceStudentBinding binding;
     Calendar calInstance;
 
     public AttendanceStudent() {
@@ -53,10 +53,10 @@ public class AttendanceStudent extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        layoutBinding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_attendance_student, container, false
         );
-        return layoutBinding.getRoot();
+        return binding.getRoot();
     }
 
     @Override
@@ -68,12 +68,12 @@ public class AttendanceStudent extends Fragment {
 
         // Progress bar
         int progress = 75;
-        layoutBinding.attendanceProgressBar.setProgress(progress);
-        layoutBinding.attendancePercentText.setText(String.valueOf(progress));
+        binding.attendanceProgressBar.setProgress(progress);
+        binding.attendancePercentText.setText(String.valueOf(progress));
 
 
         // Table creation
-        TableLayout table = layoutBinding.attendanceStudentTable;
+        TableLayout table = binding.attendanceStudentTable;
         table.setStretchAllColumns(true);
         table.bringToFront();
         String[] shortWeekDays = DateFormatSymbols.getInstance().getShortWeekdays();
@@ -84,7 +84,7 @@ public class AttendanceStudent extends Fragment {
             for (int j = 0; j < 7; j++) {
                 // For Element
                 TemplateAttendanceDateBinding card = DataBindingUtil.inflate(
-                        inflater, R.layout.template_attendance_date, tr, false
+                        inflater, R.layout.template_attendance_date, tr, true
                 );
                 CardView cardView = (CardView) card.getRoot();
 
@@ -96,7 +96,6 @@ public class AttendanceStudent extends Fragment {
                     );
                     card.attendanceDateText.setText(shortWeekDays[j + 1]);
                 }
-                tr.addView(cardView);
             }
             table.addView(tr);
         }
@@ -106,7 +105,7 @@ public class AttendanceStudent extends Fragment {
                 .createFromResource(activity, R.array.months, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        Spinner spinner = layoutBinding.attendanceSpinner;
+        Spinner spinner = binding.attendanceSpinner;
         spinner.setAdapter(adapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
