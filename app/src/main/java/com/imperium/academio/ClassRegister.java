@@ -30,8 +30,8 @@ public class ClassRegister extends AppCompatActivity {
         Button lout = (Button) findViewById(R.id.logout);
         lout.setOnClickListener(view -> {
             firebaseAuth.signOut();
-            finish();
             startActivity(new Intent(ClassRegister.this,Login.class));
+            finish();
         });
         RecyclerView classRv;
         ClassRegisterRvAdapter registerRvAdapter;
