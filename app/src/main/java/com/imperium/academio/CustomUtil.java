@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.os.Handler;
-import android.util.Log;
 import android.widget.EditText;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -102,7 +101,6 @@ public final class CustomUtil {
                     activity.runOnUiThread(() -> {
                         inputLayout.setError(null);
                         inputLayout.setErrorEnabled(false);
-                        Log.d("UIHERE", "validated");
                     });
             }, 10000);
             return null;

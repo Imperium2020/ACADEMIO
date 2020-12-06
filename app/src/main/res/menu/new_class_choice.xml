@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menu_id_one"
+        android:title="@string/create_class" />
+
+    <item
+        android:id="@+id/menu_id_two"
+        android:title="@string/join_class" />
+</menu>
