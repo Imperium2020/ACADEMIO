@@ -24,7 +24,7 @@ public class ClassRegisterRvAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     final Activity activity;
     final List<ClassRegisterRvModel> classes;
     final int visibleThreshold = 4;
-    private final int VIEW_ITEM_TYPE = 0, VIEW_ITEM_LOADING = 1;
+    private final int VIEW_ITEM_LOADING = 1;
     LoadMore loadMore;
     boolean isLoading;
     int lastVisibleItem, totalItemCount;
@@ -59,7 +59,7 @@ public class ClassRegisterRvAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemViewType(int position) {
-        return classes.get(position) == null ? VIEW_ITEM_LOADING : VIEW_ITEM_TYPE;
+        return classes.get(position) == null ? VIEW_ITEM_LOADING : 0;
     }
 
     @NonNull

@@ -24,7 +24,7 @@ public class MaterialTopicRvAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     final Activity activity;
     final List<MaterialTopicRvModel> items;
     final int visibleThreshold = 3;
-    private final int VIEW_ITEM_TYPE = 0, VIEW_ITEM_LOADING = 1;
+    private final int VIEW_ITEM_LOADING = 1;
     LoadMore loadMore;
     boolean isLoading;
     int lastVisibleItem, totalItemCount;
@@ -60,7 +60,7 @@ public class MaterialTopicRvAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemViewType(int position) {
-        return items.get(position) == null ? VIEW_ITEM_LOADING : VIEW_ITEM_TYPE;
+        return items.get(position) == null ? VIEW_ITEM_LOADING : 0;
     }
 
     @NonNull

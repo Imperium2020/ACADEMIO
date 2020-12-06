@@ -19,6 +19,12 @@
     <string name="courses">courses</string>
     <string name="login">Sign In</string>
     <string name="log_out">Log Out</string>
+    <string name="class_name">Class Name</string>
+    <string name="create_class">Create Class</string>
+    <string name="join_class">Join Class</string>
+    <string name="teacher_name">Teacher Name</string>
+    <string name="cancel">Cancel</string>
+    <string name="submit">Submit</string>
     <string-array name="months">
         <item>JAN</item>
         <item>FEB</item>
