@@ -91,7 +91,6 @@ public class MaterialTopicRvAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             viewHolder.linearLayout.setOnClickListener(v -> {
                 topicRowIndex = position;
                 listener.onTopicItemClick(viewHolder.itemView, position);
-                notifyDataSetChanged();
             });
 
 

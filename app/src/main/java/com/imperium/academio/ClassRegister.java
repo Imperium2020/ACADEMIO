@@ -2,7 +2,6 @@ package com.imperium.academio;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -59,7 +58,8 @@ public class ClassRegister extends AppCompatActivity implements ClassDialogFragm
         ));
         registerRvAdapter.setOnItemClickListener((itemView, position) -> {
             Intent intent = new Intent(ClassRegister.this, MainMenu.class);
-            intent.putExtra("ClassId", cList.get(position).getKey());
+            intent.putExtra("classId", cList.get(position).getKey());
+            intent.putExtra("userId", userId);
             startActivity(intent);
             Toast.makeText(this, "Opening class: " + cList.get(position).getName(), Toast.LENGTH_SHORT).show();
             finish();
@@ -134,8 +134,9 @@ public class ClassRegister extends AppCompatActivity implements ClassDialogFragm
                     // Intent to the class
                     ClassRegister.this.startActivity(
                             new Intent(ClassRegister.this, MainMenu.class)
-                                    .putExtra("UserId", classObject.teacherId)
-                                    .putExtra("ClassId", key)
+                                    .putExtra("userId", classObject.teacherId)
+                                    .putExtra("teacherId", classObject.teacherId)
+                                    .putExtra("classId", key)
                     );
 
                 }
@@ -172,8 +173,9 @@ public class ClassRegister extends AppCompatActivity implements ClassDialogFragm
                     // Intent to the class
                     ClassRegister.this.startActivity(
                             new Intent(ClassRegister.this, MainMenu.class)
-                                    .putExtra("ClassId", key)
-                                    .putExtra("UserId", userId)
+                                    .putExtra("classId", key)
+                                    .putExtra("teacherId", classFromDb.teacherId)
+                                    .putExtra("userId", userId)
                     );
                     message = "Opening class: " + classFromDb.className;
                 }
@@ -193,9 +195,8 @@ public class ClassRegister extends AppCompatActivity implements ClassDialogFragm
         userClasses.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists()) {
-                    Log.d("TAG", "run: HELLO INSIDE DATACHANGE 1 " + cList.size());
 
+                if (snapshot.exists()) {
                     for (DataSnapshot c : snapshot.getChildren()) {
                         ClassRegisterRvModel elt = new ClassRegisterRvModel(c.getKey(), c.getValue(String.class));
                         if (!cList.contains(elt))
@@ -204,7 +205,6 @@ public class ClassRegister extends AppCompatActivity implements ClassDialogFragm
                     cList.removeAll(Collections.singleton(null));
                     registerRvAdapter.notifyDataSetChanged();
                     registerRvAdapter.setLoaded();
-                    Log.d("TAG", "run: HELLO INSIDE DATACHANGE" + cList.size());
                 }
             }
 
