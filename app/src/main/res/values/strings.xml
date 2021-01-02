@@ -28,6 +28,13 @@
     <string name="roll_number">Roll No.</string>
     <string name="student_name">Student Name</string>
     <string name="presence">Presence</string>
+    <string name="add_item">Add Item</string>
+    <string name="add_material">Add Material</string>
+    <string name="material_title">Material Title</string>
+    <string name="select_type">Select type: </string>
+    <string name="material_topic">Material Topic</string>
+    <string name="material_link">Material Link</string>
+    <string name="material_text">Material Text</string>
     <string-array name="months">
         <item>JAN</item>
         <item>FEB</item>
@@ -41,5 +48,11 @@
         <item>OCT</item>
         <item>NOV</item>
         <item>DEC</item>
+    </string-array>
+    <string-array name="types">
+        <item>Notes</item>
+        <item>Videos</item>
+        <item>Links</item>
+        <item>Alerts</item>
     </string-array>
 </resources>

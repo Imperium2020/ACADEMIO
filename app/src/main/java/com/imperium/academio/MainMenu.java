@@ -26,10 +26,8 @@ public class MainMenu extends AppCompatActivity {
         setContentView(R.layout.activity_main_menu);
         viewPager = findViewById(R.id.view_pager);
         tabLayout = findViewById(R.id.tabs);
-        viewPager.setAdapter(createMenuAdapter());
+        viewPager.setAdapter(createMenuAdapter(getIntent().getExtras()));
         viewPager.setUserInputEnabled(false);
-
-
 
         new TabLayoutMediator(tabLayout, viewPager,
                 (tab, position) -> {
@@ -42,7 +40,7 @@ public class MainMenu extends AppCompatActivity {
     }
 
 
-    private MainMenuFragmentAdapter createMenuAdapter() {
-        return new MainMenuFragmentAdapter(this, titles.size());
+    private MainMenuFragmentAdapter createMenuAdapter(Bundle args) {
+        return new MainMenuFragmentAdapter(this, args, titles.size());
     }
 }

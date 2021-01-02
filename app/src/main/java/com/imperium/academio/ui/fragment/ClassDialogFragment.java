@@ -66,7 +66,7 @@ public class ClassDialogFragment extends DialogFragment {
 
         // on submit button
         binding.classDialogSubmit.setOnClickListener(v -> {
-            String className = CustomUtil.validateField(binding.inpJoinClassName, "fullname");
+            String className = CustomUtil.validateField(binding.inpJoinClassName, "text");
             String teacherName = CustomUtil.validateField(binding.inpJoinTeacherName, "username");
             SubmitListener listener = (SubmitListener) getActivity();
 

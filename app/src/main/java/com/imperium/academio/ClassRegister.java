@@ -2,7 +2,6 @@ package com.imperium.academio;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -10,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.PopupMenu;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -26,12 +24,16 @@ import com.imperium.academio.ui.fragment.ClassDialogFragment;
 import com.imperium.academio.ui.model.ClassRegisterRvModel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ClassRegister extends AppCompatActivity implements ClassDialogFragment.SubmitListener {
     ActivityClassRegisterBinding binding;
     private FirebaseAuth firebaseAuth;
     DatabaseReference classes;
+    String userId;
+    List<ClassRegisterRvModel> cList;
+    ClassRegisterRvAdapter registerRvAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,42 +42,37 @@ public class ClassRegister extends AppCompatActivity implements ClassDialogFragm
         firebaseAuth = FirebaseAuth.getInstance();
         classes = FirebaseDatabase.getInstance().getReference("class");
 
-        RecyclerView classRv;
-        ClassRegisterRvAdapter registerRvAdapter;
+        FirebaseUser user = firebaseAuth.getCurrentUser();
+        if (user == null || user.getDisplayName() == null) {
+            startActivity(new Intent(this, Login.class));
+            finish();
+            return;
+        }
+        userId = CustomUtil.SHA1(user.getDisplayName());
+        cList = (cList == null) ? new ArrayList<>() : cList;
 
-        List<ClassRegisterRvModel> classes = new ArrayList<>();
-
-        classes.add(new ClassRegisterRvModel("Design Project"));
-        classes.add(new ClassRegisterRvModel("System Software"));
-        classes.add(new ClassRegisterRvModel("Data Communication"));
-
-        classRv = findViewById(R.id.class_register);
-        registerRvAdapter = new ClassRegisterRvAdapter(classRv, this, classes);
-        classRv.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        classRv.setAdapter(registerRvAdapter);
-
+        cList.add(null);
+        registerRvAdapter = new ClassRegisterRvAdapter(binding.classRegister, ClassRegister.this, cList);
+        binding.classRegister.setLayoutManager(new LinearLayoutManager(
+                ClassRegister.this, LinearLayoutManager.VERTICAL, false
+        ));
         registerRvAdapter.setOnItemClickListener((itemView, position) -> {
-            String name = classes.get(position).getName();
-            Toast.makeText(this, name + " was clicked!", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(ClassRegister.this, MainMenu.class);
+            intent.putExtra("classId", cList.get(position).getKey());
+            intent.putExtra("userId", userId);
             startActivity(intent);
+            Toast.makeText(this, "Opening class: " + cList.get(position).getName(), Toast.LENGTH_SHORT).show();
+            finish();
         });
 
         registerRvAdapter.setLoadMore(() -> {
-            if (classes.size() < 6) {
-                classes.add(null);
-                classRv.post(() -> registerRvAdapter.notifyItemInserted(classes.size() - 1));
-                new Handler().postDelayed(() -> {
-                    classes.remove(null);
-                    classes.add(new ClassRegisterRvModel("Theory of Computation"));
-                    classes.add(new ClassRegisterRvModel("Graph Theory and Combinatorics"));
-                    classes.add(new ClassRegisterRvModel("Microprocessors and Microcontrollers"));
-                    registerRvAdapter.notifyDataSetChanged();
-                    registerRvAdapter.setLoaded();
-                }, 2000);
-
+            if (!cList.contains(null)) {
+                cList.add(null);
+                binding.classRegister.post(() -> registerRvAdapter.notifyItemInserted(cList.size() - 1));
             }
+            loadClasses();
         });
+        binding.classRegister.setAdapter(registerRvAdapter);
 
 
         binding.btnLogout.setOnClickListener(view -> {
@@ -83,7 +80,6 @@ public class ClassRegister extends AppCompatActivity implements ClassDialogFragm
             startActivity(new Intent(ClassRegister.this, Login.class));
             finish();
         });
-
 
         binding.btnClassRegister.setOnClickListener(view -> {
             PopupMenu popup = new PopupMenu(ClassRegister.this, binding.btnClassRegister);
@@ -105,17 +101,15 @@ public class ClassRegister extends AppCompatActivity implements ClassDialogFragm
     public void onSubmit(boolean isJoin, String classname, String teacherName) {
         FirebaseUser user = firebaseAuth.getCurrentUser();
         if (user == null || user.getDisplayName() == null) return;
-        String username = user.getDisplayName();
         if (isJoin) {
             ClassHelperClass classObject = new ClassHelperClass(classname, CustomUtil.SHA1(teacherName));
-            joinClass(classObject, username);
+            joinClass(classObject);
         } else {
             // create class
-            ClassHelperClass classObject = new ClassHelperClass(classname, CustomUtil.SHA1(username));
+            ClassHelperClass classObject = new ClassHelperClass(classname, userId);
             createClass(classObject);
         }
     }
-
 
     // create class function
     private void createClass(@NonNull ClassHelperClass classObject) {
@@ -131,17 +125,18 @@ public class ClassRegister extends AppCompatActivity implements ClassDialogFragm
                     classes.child(key).setValue(classObject);
 
                     // add class to user
-                    FirebaseDatabase.getInstance().getReference("users/" + classObject.teacherId)
+                    FirebaseDatabase.getInstance().getReference("users/" + userId)
                             .child("classes/" + key)
-                            .setValue(true);
+                            .setValue(classObject.className);
 
                     message = "Creating a new class: " + classObject.className;
 
                     // Intent to the class
                     ClassRegister.this.startActivity(
                             new Intent(ClassRegister.this, MainMenu.class)
-                                    .putExtra("UserId", classObject.teacherId)
-                                    .putExtra("ClassId", key)
+                                    .putExtra("userId", classObject.teacherId)
+                                    .putExtra("teacherId", classObject.teacherId)
+                                    .putExtra("classId", key)
                     );
 
                 }
@@ -155,7 +150,7 @@ public class ClassRegister extends AppCompatActivity implements ClassDialogFragm
         });
     }
 
-    private void joinClass(ClassHelperClass classObject, String username) {
+    private void joinClass(ClassHelperClass classObject) {
         String key = classObject.generateKey();
         classes.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -167,24 +162,25 @@ public class ClassRegister extends AppCompatActivity implements ClassDialogFragm
                 } else {
 
                     // add user to class
-                    String userId = CustomUtil.SHA1(username);
                     if (!userId.equals(classFromDb.teacherId))
                         classes.child(key).child("students/" + userId).setValue(true);
 
                     // add class to user
-                    FirebaseDatabase.getInstance().getReference("users/" + classObject.teacherId)
+                    FirebaseDatabase.getInstance().getReference("users/" + userId)
                             .child("classes/" + key)
-                            .setValue(true);
+                            .setValue(classObject.className);
 
                     // Intent to the class
                     ClassRegister.this.startActivity(
                             new Intent(ClassRegister.this, MainMenu.class)
-                                    .putExtra("ClassId", key)
-                                    .putExtra("UserId", username)
+                                    .putExtra("classId", key)
+                                    .putExtra("teacherId", classFromDb.teacherId)
+                                    .putExtra("userId", userId)
                     );
                     message = "Opening class: " + classFromDb.className;
                 }
                 Toast.makeText(ClassRegister.this, message, Toast.LENGTH_SHORT).show();
+                ClassRegister.this.finish();
             }
 
             @Override
@@ -193,32 +189,28 @@ public class ClassRegister extends AppCompatActivity implements ClassDialogFragm
         });
     }
 
-}
+    private void loadClasses() {
+        DatabaseReference userClasses = FirebaseDatabase.getInstance().getReference("users/" + userId + "/classes");
 
-
-/*
-    private void joinClass(DatabaseReference reference, Activity activity, ClassHelperClass cObj, String username) {
-        String key = cObj.generateKey();
-        reference.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+        userClasses.orderByValue().addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                ClassHelperClass klass = snapshot.getValue(ClassHelperClass.class);
-                String message;
-                if (!snapshot.exists() || klass == null) {
-                    message = "Class Doesn't Exist!";
-                } else {
-                    activity.startActivity(new Intent(activity, MainMenu.class).putExtra("ClassId", key).putExtra("UserId", username));
-                    message = "Opening class: " + klass.className;
+
+                if (snapshot.exists()) {
+                    for (DataSnapshot c : snapshot.getChildren()) {
+                        ClassRegisterRvModel elt = new ClassRegisterRvModel(c.getKey(), c.getValue(String.class));
+                        if (!cList.contains(elt))
+                            cList.add(elt);
+                    }
+                    cList.removeAll(Collections.singleton(null));
+                    registerRvAdapter.notifyDataSetChanged();
+                    registerRvAdapter.setLoaded();
                 }
-                Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(getActivity(), "Error while trying to access classes.", Toast.LENGTH_SHORT).show();
             }
         });
     }
 }
-
- */
