@@ -17,7 +17,7 @@
             android:fontFamily="@font/bungee"
             android:text="@string/courses"
             android:textSize="36sp"
-            app:layout_constraintBottom_toTopOf="@+id/class_register"
+            app:layout_constraintBottom_toTopOf="@+id/class_register_swipe"
             app:layout_constraintEnd_toStartOf="@+id/btn_class_register"
             app:layout_constraintHorizontal_chainStyle="spread_inside"
             app:layout_constraintStart_toStartOf="parent"
@@ -29,7 +29,7 @@
             android:layout_height="50dp"
             android:layout_marginEnd="30dp"
             android:background="@drawable/plus"
-            app:layout_constraintBottom_toTopOf="@+id/class_register"
+            app:layout_constraintBottom_toTopOf="@+id/class_register_swipe"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/class_register_title"
             app:layout_constraintTop_toTopOf="parent" />
@@ -44,23 +44,31 @@
             android:layout_margin="5dp"
             android:text="@string/log_out"
             android:textSize="18sp"
-            app:layout_constraintBottom_toTopOf="@+id/class_register"
+            app:layout_constraintBottom_toTopOf="@+id/class_register_swipe"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.197"
             app:layout_constraintStart_toEndOf="@+id/class_register_title"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.491" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/class_register"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/class_register_swipe"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="5dp"
+            android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/class_register_title"
-            tools:itemCount="3"
-            tools:listitem="@layout/template_class_register_item" />
+            app:layout_constraintTop_toBottomOf="@+id/class_register_title">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/class_register"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="5dp"
+                tools:itemCount="3"
+                tools:listitem="@layout/template_class_register_item" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

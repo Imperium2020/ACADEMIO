@@ -25,6 +25,7 @@ public class ClassDialogFragment extends DialogFragment {
     }
 
     public static ClassDialogFragment newInstance(boolean type) {
+        // Create new instance of Dialog (create or join)
         ClassDialogFragment fragment = new ClassDialogFragment();
         Bundle args = new Bundle();
         args.putBoolean("isJoin", type);
@@ -44,6 +45,8 @@ public class ClassDialogFragment extends DialogFragment {
         super.onResume();
         Dialog d = getDialog();
         if (d == null) return;
+
+        // Resize dialog according to space available
         LayoutParams params = d.getWindow().getAttributes();
         params.width = LayoutParams.MATCH_PARENT;
         params.height = LayoutParams.WRAP_CONTENT;
@@ -60,33 +63,34 @@ public class ClassDialogFragment extends DialogFragment {
 
 
         boolean isJoin = args.getBoolean("isJoin", false);
-        // set the dialog
+        // Set the dialog data
         binding.txtClassDialogTitle.setText(isJoin ? getString(R.string.join_class) : getString(R.string.create_class));
         binding.inpJoinTeacherName.setVisibility(isJoin ? View.VISIBLE : View.GONE);
 
-        // on submit button
+        // Create and Attach submit button
         binding.classDialogSubmit.setOnClickListener(v -> {
             String className = CustomUtil.validateField(binding.inpJoinClassName, "text");
             String teacherName = CustomUtil.validateField(binding.inpJoinTeacherName, "username");
             SubmitListener listener = (SubmitListener) getActivity();
 
             if (className == null || (isJoin && (teacherName == null)) || listener == null) {
-                // no classname || no teacher if join || listener not implemented
+                // If any of classname, teacher, listener is not implemented return
                 return;
             }
 
-            // callback to ClassRegister
+            // Callback to ClassRegister
             listener.onSubmit(isJoin, className, teacherName);
+            if (getShowsDialog()) dismiss();
         });
 
-        // cancel button dismiss the layout
+        // Create and Attach cancel button
         binding.classDialogCancel.setOnClickListener(v -> {
             if (getDialog() != null && getShowsDialog()) {
                 dismiss();
             }
         });
 
-        // Show soft keyboard automatically and request focus to field
+        // Show soft keyboard and request focus to field
         binding.inpJoinClassName.requestFocus();
         Dialog d = getDialog();
         if (d != null)
@@ -94,6 +98,7 @@ public class ClassDialogFragment extends DialogFragment {
     }
 
     public interface SubmitListener {
+        // Interface for bubbling up control to super class
         void onSubmit(boolean isJoin, String classname, String teacherName);
     }
 }
