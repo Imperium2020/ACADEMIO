@@ -1,75 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:theme="@style/AuthTheme">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <TableLayout
+            android:id="@+id/material_add_table_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/txt_material_dialog_title"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+            <TableRow
+                android:layout_width="wrap_content"
                 android:layout_margin="5dp"
-                android:fontFamily="@font/bungee"
-                android:text="@string/add_material"
-                android:textAlignment="center"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:paddingHorizontal="5dp">
 
+                <TextView
+                    android:id="@+id/txt_material_dialog_title"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:fontFamily="@font/bungee"
+                    android:text="@string/add_material"
+                    android:textAlignment="center"
+                    android:textSize="24sp" />
+            </TableRow>
 
-            <TextView
-                android:id="@+id/txt_material_dialog_type"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:gravity="center"
-                android:text="@string/select_type"
-                android:textSize="18sp"
-                app:layout_constraintBottom_toBottomOf="@id/inp_material_type_spinner"
-                app:layout_constraintEnd_toStartOf="@id/inp_material_type_spinner"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/inp_material_type_spinner" />
-
-            <Spinner
-                android:id="@+id/inp_material_type_spinner"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:layout_marginVertical="10dp"
-                android:paddingVertical="5dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toEndOf="@id/txt_material_dialog_type"
-                app:layout_constraintTop_toBottomOf="@id/txt_material_dialog_title"
-                tools:listitem="@layout/support_simple_spinner_dropdown_item" />
-
-
-            <LinearLayout
-                android:id="@+id/linear_inputs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5dp"
-                android:orientation="vertical"
-                android:paddingHorizontal="15dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/inp_material_type_spinner">
-
+            <TableRow
+                android:layout_margin="5dp"
+                android:paddingHorizontal="5dp">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inp_material_title"
                     style="@style/TextInputLayout"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:hint="@string/material_title"
                     android:textSize="16sp">
 
@@ -80,29 +48,69 @@
                         android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+            </TableRow>
 
+            <TableRow
+                android:layout_marginHorizontal="5dp"
+                android:paddingHorizontal="5dp">
+
+                <TextView
+                    android:id="@+id/txt_material_dialog_type"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight=".3"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="0dp"
+                    android:text="@string/select_type"
+                    android:textSize="18sp" />
+
+                <Spinner
+                    android:id="@+id/inp_material_type_spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight=".7"
+                    tools:listitem="@layout/support_simple_spinner_dropdown_item" />
+            </TableRow>
+
+            <TableRow
+                android:layout_margin="5dp"
+                android:paddingHorizontal="5dp">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inp_material_topic"
                     style="@style/TextInputLayout"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:hint="@string/material_topic"
                     android:textSize="16sp">
 
-                    <com.google.android.material.textfield.TextInputEditText
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                        android:id="@+id/inp_material_topic_text"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:completionThreshold="1"
+                        android:dropDownAnchor="?attr/pivotAnchor"
                         android:fontFamily="@font/antic"
-                        android:inputType="text" />
+                        android:inputType="text"
+                        android:paddingHorizontal="16dp"
+                        android:paddingVertical="18dp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/inp_material_link_row"
+                android:layout_margin="5dp"
+                android:paddingHorizontal="5dp">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inp_material_link"
                     style="@style/TextInputLayout"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:hint="@string/material_link">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -112,12 +120,50 @@
                         android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+            </TableRow>
+
+            <TableRow
+                android:id="@+id/inp_material_note_row"
+                android:layout_marginHorizontal="5dp"
+                android:paddingHorizontal="5dp">
+
+                <TextView
+                    android:id="@+id/inp_material_note_txt"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="4"
+                    android:paddingVertical="10dp"
+                    android:text="@string/material_choose_device"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="start"
+                    android:paddingHorizontal="15dp"
+                    android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/inp_material_note"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:backgroundTint="@color/white"
+                    android:elevation="5dp"
+                    android:paddingVertical="10dp"
+                    android:text="@string/material_choose_device"
+                    android:textAlignment="center"
+                    android:textAllCaps="false"
+                    android:textColor="@color/black"
+                    android:textSize="16sp" />
+            </TableRow>
+
+            <TableRow
+                android:layout_margin="5dp"
+                android:paddingHorizontal="5dp">
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/inp_material_text"
                     style="@style/TextInputLayout"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="1"
                     android:hint="@string/material_text">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -127,40 +173,38 @@
                         android:inputType="text" />
 
                 </com.google.android.material.textfield.TextInputLayout>
+            </TableRow>
 
-            </LinearLayout>
+            <TableRow
+                android:layout_margin="5dp"
+                android:paddingHorizontal="5dp">
 
-            <Button
-                android:id="@+id/material_dialog_cancel"
-                style="@style/FlushedButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:layout_weight="1"
-                android:maxLines="1"
-                android:padding="5dp"
-                android:text="@string/cancel"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toStartOf="@id/material_dialog_submit"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/linear_inputs" />
+                <Button
+                    android:id="@+id/material_dialog_cancel"
+                    style="@style/FlushedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_weight=".5"
+                    android:maxLines="1"
+                    android:padding="5dp"
+                    android:text="@string/cancel"
+                    android:textSize="16sp" />
 
-            <Button
-                android:id="@+id/material_dialog_submit"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="10dp"
-                android:layout_weight="1"
-                android:backgroundTint="@color/black"
-                android:maxLines="1"
-                android:padding="5dp"
-                android:text="@string/submit"
-                android:textColor="@color/white"
-                android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/material_dialog_cancel"
-                app:layout_constraintTop_toBottomOf="@id/linear_inputs" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                <Button
+                    android:id="@+id/material_dialog_submit"
+                    style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="10dp"
+                    android:layout_weight=".5"
+                    android:backgroundTint="@color/black"
+                    android:maxLines="1"
+                    android:padding="5dp"
+                    android:text="@string/submit"
+                    android:textColor="@color/white"
+                    android:textSize="16sp" />
+            </TableRow>
+        </TableLayout>
     </ScrollView>
 </layout>

@@ -15,7 +15,7 @@ import com.imperium.academio.ui.model.ClassRegisterRvModel;
 import java.util.List;
 
 
-public class ClassRegisterRvAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class ClassRegisterRvAdapter extends RecyclerView.Adapter<ClassViewHolder> {
     final Activity activity;
     final List<ClassRegisterRvModel> classes;
     private OnItemClickListener listener;
@@ -33,16 +33,15 @@ public class ClassRegisterRvAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ClassViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(activity).inflate(R.layout.template_class_register_item, parent, false);
         return new ClassViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(ClassViewHolder viewHolder, int position) {
         // Create class item from data
         ClassRegisterRvModel item = classes.get(position);
-        ClassViewHolder viewHolder = (ClassViewHolder) holder;
         viewHolder.name.setText(item.getName());
 
         // Attach click listener to items
