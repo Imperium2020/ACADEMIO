@@ -35,6 +35,8 @@
     <string name="material_topic">Material Topic</string>
     <string name="material_link">Material Link</string>
     <string name="material_text">Material Text</string>
+    <string name="refresh">refresh</string>
+    <string name="material_choose_device">Select Material</string>
     <string-array name="months">
         <item>JAN</item>
         <item>FEB</item>

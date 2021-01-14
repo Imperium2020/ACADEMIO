@@ -9,6 +9,7 @@ public class MaterialHelperClass {
     public String title;
     public String topic;
     public String type;
+    public long timestamp;
 
     public MaterialHelperClass() {
     }
@@ -24,6 +25,11 @@ public class MaterialHelperClass {
         this.title = title;
         this.topic = topic;
         this.type = type;
+        this.timestamp = System.currentTimeMillis();
+    }
+
+    public long getTimestamp() {
+        return timestamp;
     }
 
     public String getLink() {
