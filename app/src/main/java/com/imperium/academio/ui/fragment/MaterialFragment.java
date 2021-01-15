@@ -30,7 +30,6 @@ import com.google.firebase.storage.UploadTask;
 import com.imperium.academio.Login;
 import com.imperium.academio.R;
 import com.imperium.academio.databinding.FragmentMaterialBinding;
-import com.imperium.academio.fireclass.ClassHelperClass;
 import com.imperium.academio.fireclass.MaterialHelperClass;
 import com.imperium.academio.ui.adapters.MaterialItemRvAdapter;
 import com.imperium.academio.ui.adapters.MaterialTopicRvAdapter;
@@ -54,6 +53,7 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
     DatabaseReference materials;
     String userId;
     String classId;
+    String teacherId;
 
     List<String> materialTypes;
     List<Integer> materialTypeIcons;
@@ -97,6 +97,7 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
         if (bundle != null) {
             classId = bundle.getString("classId");
             userId = bundle.getString("userId");
+            teacherId = bundle.getString("teacherId");
         }
         binding = DataBindingUtil.inflate(inflater, R.layout.fragment_material, container, false);
 
@@ -115,14 +116,16 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
         materials = FirebaseDatabase.getInstance().getReference("materials");
 
         // Redirect to login if user or class is not set from intent
-        if (userId == null || classId == null) {
+        if (userId == null || classId == null || teacherId == null) {
             activity.startActivity(new Intent(activity, Login.class));
             activity.finish();
             return;
         }
 
-        // Function to allow teacher to add material
-        addMatIfTeacher();
+        // Allow teacher to add material
+        if (userId.equals(teacherId)) {
+            binding.materialAddItem.setVisibility(View.VISIBLE);
+        }
 
         // Data Arrays
         dbItems = new ArrayList<>();
@@ -211,33 +214,6 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
         handler.postDelayed(this::refresh, 600);
     }
 
-    private void addMatIfTeacher() {
-        handler.post(() -> {
-            // Check if User is a Teacher for this class
-            // If yes, allow to add new materials
-            selectedClass.addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if (snapshot.exists()) {
-                        // Get teacherId of current class
-                        ClassHelperClass selectedClassObject = snapshot.getValue(ClassHelperClass.class);
-                        if (selectedClassObject == null) return;
-                        String teacherId = selectedClassObject.teacherId;
-
-                        // Check if user is Teacher of the current class
-                        if (userId.equals(teacherId)) {
-                            binding.materialAddItem.setVisibility(View.VISIBLE);
-                        }
-                    }
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-                }
-            });
-        });
-
-    }
 
     @Override
     public void onSubmit(String type, String title, String topic, String text, String link) {
@@ -262,7 +238,7 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
         String fileName = path.substring(path.lastIndexOf("/") + 1);
         StorageReference classStorage = storage.child(materialObject.classId + "/" + fileName);
 
-        Log.d("MaterialFragment", "pushFile: " +path);
+        Log.d("MaterialFragment", "pushFile: " + path);
         InputStream stream = new FileInputStream(new File(path));
         UploadTask uploadTask = classStorage.putStream(stream);
         uploadTask.addOnFailureListener(exception -> {
