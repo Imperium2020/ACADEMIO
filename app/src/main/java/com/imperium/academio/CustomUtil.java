@@ -83,6 +83,15 @@ public final class CustomUtil {
                         error = "Password should not contain spaces.";
                     }
                     break;
+                case "year":
+                    if (!text.matches("^[0-9]*$")) {
+                        error = "Year should only contain digits.";
+                    } else {
+                        int year = Integer.parseInt(text);
+                        if (year < 1970 || year > 2038) {
+                            error = "Year out of bounds.";
+                        }
+                    }
             }
         }
         inputLayout.setError(error);

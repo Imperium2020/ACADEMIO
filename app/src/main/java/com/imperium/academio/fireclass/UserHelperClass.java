@@ -3,11 +3,16 @@ package com.imperium.academio.fireclass;
 import com.google.firebase.database.Exclude;
 import com.imperium.academio.CustomUtil;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class UserHelperClass {
     public String email;
     public String fname;
     public String pass;
     public String uname;
+    public Map<String, String> classes = new HashMap<>();
+
 
     public UserHelperClass() {
     }
@@ -18,10 +23,14 @@ public class UserHelperClass {
     }
 
     public UserHelperClass(String fname, String uname, String email, String pass) {
+        this(uname, pass);
         this.email = email;
         this.fname = fname;
-        this.pass = pass;
-        this.uname = uname;
+    }
+
+    public UserHelperClass(String fname, String uname, String email, String pass, Map<String, String> classes) {
+        this(fname, uname, email, pass);
+        this.classes = classes;
     }
 
     public String getEmail() {

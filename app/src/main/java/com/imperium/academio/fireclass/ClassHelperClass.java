@@ -8,9 +8,9 @@ import java.util.Map;
 public class ClassHelperClass {
     public String className;
     public String teacherId;
-    public Integer sessionCount;
+    public Map<String, Boolean> sessions = new HashMap<>();
     public Map<String, Boolean> students = new HashMap<>();
-    public Map<String, Boolean> attendance = new HashMap<>();
+    public Map<String, AttendanceHelperClass> attendance = new HashMap<>();
 
     public ClassHelperClass() {
         // Required for firebase
@@ -21,10 +21,10 @@ public class ClassHelperClass {
         this.teacherId = teacherId;
     }
 
-    public ClassHelperClass(String className, String teacherId, Integer sessionCount, Map<String, Boolean> students, Map<String, Boolean> attendance) {
+    public ClassHelperClass(String className, String teacherId, Map<String, Boolean> sessions, Map<String, Boolean> students, Map<String, AttendanceHelperClass> attendance) {
         this.className = className;
         this.teacherId = teacherId;
-        this.sessionCount = sessionCount;
+        this.sessions = sessions;
         this.students = students;
         this.attendance = attendance;
     }
