@@ -1,6 +1,8 @@
 package com.imperium.academio.ui.fragment;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -27,6 +29,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.imperium.academio.CustomUtil;
 import com.imperium.academio.Login;
 import com.imperium.academio.R;
 import com.imperium.academio.databinding.FragmentMaterialBinding;
@@ -36,8 +39,6 @@ import com.imperium.academio.ui.adapters.MaterialTopicRvAdapter;
 import com.imperium.academio.ui.model.MaterialItemRvModel;
 import com.imperium.academio.ui.model.MaterialTopicRvModel;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
     FirebaseAuth firebaseAuth;
     DatabaseReference selectedClass;
     DatabaseReference materials;
+    StorageReference classStorage;
     String userId;
     String classId;
     String teacherId;
@@ -113,6 +115,7 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
 
         firebaseAuth = FirebaseAuth.getInstance();
         selectedClass = FirebaseDatabase.getInstance().getReference("class/" + classId);
+        classStorage = FirebaseStorage.getInstance().getReference(classId);
         materials = FirebaseDatabase.getInstance().getReference("materials");
 
         // Redirect to login if user or class is not set from intent
@@ -194,9 +197,30 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
 
         // Create and attach listener to material item recyclerview
         itemRvAdapter.setOnItemClickListener((itemView, position) -> {
-            String title = items.get(position).getTitle();
-            query.removeEventListener(dbListener);
-            Toast.makeText(activity, title + " was clicked!", Toast.LENGTH_SHORT).show();
+            MaterialItemRvModel item = items.get(position);
+            String title = item.getTitle();
+            MaterialHelperClass material = null;
+            for (MaterialHelperClass mat : dbItems) {
+                if (title.equals(mat.title)) {
+                    material = mat;
+                    break;
+                }
+            }
+            if (material == null || material.type.equals("Alerts") || material.link == null)
+                return;
+
+            Intent viewIntent = new Intent(Intent.ACTION_VIEW);
+            viewIntent.setData(Uri.parse(material.getLink()));
+
+            String chooser_title = "Select an app for viewing";
+            Intent chooser = Intent.createChooser(viewIntent, chooser_title);
+
+            try {
+                startActivity(chooser);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(activity, "Could not find app", Toast.LENGTH_SHORT).show();
+            }
+
         });
 
         // Add material button listener
@@ -217,55 +241,53 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
 
     @Override
     public void onSubmit(String type, String title, String topic, String text, String link) {
-        MaterialHelperClass material = new MaterialHelperClass(classId, link, text, title, topic, type);
-        if (type.equals("Notes") || type.equals("Videos")) {
-            try {
-                pushFile(material);
-            } catch (FileNotFoundException e) {
-                Toast.makeText(activity, "Cannot Access file!", Toast.LENGTH_SHORT).show();
-                Log.e("MaterialFragment", "onSubmit: File not found", e);
-            }
-        } else {
-            createMaterial(material);
+        createMaterial(classId, link, text, title, topic, type);
+    }
+
+    @Override
+    public void onSubmit(String type, String title, String topic, String text, Uri link) {
+        // get reference link and attach link to material object link
+        StorageReference mStorage = classStorage.child(CustomUtil.SHA1(title));
+        try {
+            InputStream fileStream = activity.getContentResolver().openInputStream(link);
+            UploadTask uploadTask = mStorage.putStream(fileStream);
+
+            uploadTask.continueWithTask(task -> {
+                if (!task.isSuccessful()) {
+                    throw task.getException();
+                }
+
+                // Continue with the task to get the download URL
+                return mStorage.getDownloadUrl();
+            }).addOnCompleteListener(task -> {
+                if (task.isSuccessful()) {
+                    Uri downloadUri = task.getResult();
+                    String dbLink = downloadUri.toString();
+                    createMaterial(classId, dbLink, text, title, topic, type);
+                } else {
+                    Toast.makeText(activity, "Upload got interrupted.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (FileNotFoundException fnf) {
+            Toast.makeText(activity, "File Not Found!", Toast.LENGTH_SHORT).show();
+            Log.d("MaterialFragment", "onSubmit(Uri): File Not Found", fnf);
         }
     }
 
-    // push file function
-    private void pushFile(@NonNull MaterialHelperClass materialObject) throws FileNotFoundException {
-        // get reference link and attach link to material object link
-        StorageReference storage = FirebaseStorage.getInstance().getReference();
-        String path = materialObject.link;
-        String fileName = path.substring(path.lastIndexOf("/") + 1);
-        StorageReference classStorage = storage.child(materialObject.classId + "/" + fileName);
-
-        Log.d("MaterialFragment", "pushFile: " + path);
-        InputStream stream = new FileInputStream(new File(path));
-        UploadTask uploadTask = classStorage.putStream(stream);
-        uploadTask.addOnFailureListener(exception -> {
-            // Handle unsuccessful uploads
-            Toast.makeText(activity, "Upload got interrupted.", Toast.LENGTH_SHORT).show();
-        }).addOnSuccessListener(taskSnapshot -> {
-            // Handle successful uploads
-            createMaterial(new MaterialHelperClass(
-                    materialObject.classId, classStorage.getPath(), materialObject.text,
-                    materialObject.title, materialObject.topic, materialObject.type
-            ));
-        });
-    }
-
     // create material function
-    private void createMaterial(@NonNull MaterialHelperClass materialObject) {
+    private void createMaterial(String classId, String link, String text, String title, String topic, String type) {
+        MaterialHelperClass materialObject = new MaterialHelperClass(
+                classId, link, text, title, topic, type
+        );
         String key = materialObject.generateKey();
         materials.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String message;
-                if (snapshot.exists() && snapshot.getValue(MaterialHelperClass.class) != null) {
-                    message = "This Material Title already exist!";
-                } else {
+                String message = "This Material Title already exist! Please use another title";
+                if (!snapshot.exists()) {
                     // add material to list of materials in db
                     materials.child(key).setValue(materialObject);
-                    message = "Creating material: " + materialObject.getTitle();
+                    message = "Creating material: " + title;
                 }
                 Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
             }
@@ -353,7 +375,6 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
 
                     dbItems.clear();
                     dbItems.addAll(tempItemList);
-                    Log.d("MaterialFragment", "onDataChange");
                     Collections.sort(dbItems, (m1, m2) -> (int) (m2.timestamp - m1.timestamp));
                     binding.materialBtnRefresh.setVisibility(View.VISIBLE);
                 }

@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -138,16 +137,13 @@ public class MaterialDialogFragment extends DialogFragment {
                     if (uri == null) return;
                     mFileURI = uri;
                     binding.inpMaterialNoteTxt.setText(uri.getPath());
-                    ImageView img = new ImageView(context);
-                    img.setImageURI(uri);
-                    binding.materialAddTableLayout.addView(img, 6);
                 }
         );
 
         // attaching chooser to button
         binding.inpMaterialNote.setOnClickListener(view1 -> {
             if (selectedType == null) return;
-            mGetContent.launch("image/*");
+            mGetContent.launch("*/*");
         });
 
         // on submit button
@@ -165,23 +161,25 @@ public class MaterialDialogFragment extends DialogFragment {
                 return;
             if (selectedType == null) {
                 Toast.makeText(context, "Please Select a type!", Toast.LENGTH_SHORT).show();
-            } else if (selectedType.equals("Notes") || selectedType.equals("Videos")) {
+            } else if (selectedType.equals("Links")) {
+                if (text == null || link == null) {
+                    return;
+                }
+            } else if (selectedType.equals("Alerts")) {
+                if (text == null) {
+                    return;
+                }
+            }
+            // callback to ClassRegister
+            if (selectedType.equals("Notes") || selectedType.equals("Videos")) {
                 if (mFileURI == null) {
                     Toast.makeText(context, "Select a file! (use link for urls)", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                else {
-                    link = mFileURI.getPath();
-                }
-            } else if (selectedType.equals("Links")) {
-                if (text == null || link == null)
-                    return;
-            } else if (selectedType.equals("Alerts")) {
-                if (text == null)
-                    return;
+                listener.onSubmit(selectedType, title, topic, text, mFileURI);
+            } else {
+                listener.onSubmit(selectedType, title, topic, text, link);
             }
-            // callback to ClassRegister
-            listener.onSubmit(selectedType, title, topic, text, link);
             if (getDialog() != null && getShowsDialog()) {
                 dismiss();
             }
@@ -224,6 +222,8 @@ public class MaterialDialogFragment extends DialogFragment {
 
     public interface SubmitListener {
         void onSubmit(String type, String title, String topic, String text, String link);
+
+        void onSubmit(String type, String title, String topic, String text, Uri link);
     }
 }
 
