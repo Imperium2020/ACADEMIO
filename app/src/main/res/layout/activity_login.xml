@@ -68,14 +68,6 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
-                android:id="@+id/btn_login_forgot_password"
-                style="@style/FlushedButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_margin="5dp"
-                android:text="@string/forgot_password" />
 
             <ProgressBar
                 android:id="@+id/login_progressBar"
