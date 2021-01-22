@@ -88,7 +88,7 @@ public class AttendanceStudent extends Fragment {
         fetchAttendanceSheet();
 
         // Temporarily fill progress bar
-        setProgress(100);
+        setProgress(0, 0);
 
         // Table creation
         TableLayout table = binding.attendanceStudentTable;
@@ -225,9 +225,8 @@ public class AttendanceStudent extends Fragment {
 
                 // Set progress bar
                 int sessionCount = currentClass.sessions.size();
-                if (sessionCount == 0) return;
-                int percent = (sessionCount - absentList.size()) * (100 / sessionCount);
-                setProgress(percent);
+                int percent = sessionCount - absentList.size();
+                setProgress(percent, sessionCount);
             }
 
             @Override
@@ -264,9 +263,29 @@ public class AttendanceStudent extends Fragment {
         return absentDatesInMonth;
     }
 
-    private void setProgress(int progress) {
+    private void setProgress(int present, int sessionCount) {
+        int progress;
+        TextView detailed = binding.attendancePercentDetailed;
+
+        if (sessionCount == 0 || present < 0) {
+            progress = 100;
+        } else {
+            progress = 100 * present / sessionCount;
+            String detail = "Session count: " + sessionCount +
+                    "\nPresent count: " + present +
+                    "\nAbsent  count: " + (sessionCount - present);
+            detailed.setText(detail);
+            binding.attendancePercentText.setOnClickListener(view -> {
+                if (detailed.getVisibility() == View.VISIBLE) {
+                    detailed.setVisibility(View.GONE);
+                } else {
+                    detailed.setVisibility(View.VISIBLE);
+                }
+            });
+        }
         binding.attendanceProgressBar.setProgress(progress);
         binding.attendancePercentText.setText(String.format("%s%%", progress));
+        binding.attendancePercentText.bringToFront();
     }
 
     private int getColor(int resColor) {

@@ -35,6 +35,19 @@
             app:layout_constraintTop_toTopOf="@+id/attendance_progress_bar"
             tools:text="75%" />
 
+        <TextView
+            android:id="@+id/attendance_percent_detailed"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center_vertical"
+            android:textSize="18sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/attendance_progress_bar"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/attendance_progress_bar"
+            app:layout_constraintTop_toTopOf="@id/attendance_progress_bar"
+            tools:text="Session count: 4\nPresent count: 3\nAbsent  count: 1" />
+
         <LinearLayout
             android:id="@+id/attendance_choice"
             android:layout_width="match_parent"
