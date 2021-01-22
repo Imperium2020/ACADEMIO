@@ -225,6 +225,7 @@ public class AttendanceStudent extends Fragment {
 
                 // Set progress bar
                 int sessionCount = currentClass.sessions.size();
+                if (sessionCount == 0) return;
                 int percent = (sessionCount - absentList.size()) * (100 / sessionCount);
                 setProgress(percent);
             }
