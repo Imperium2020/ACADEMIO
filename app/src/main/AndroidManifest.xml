@@ -3,6 +3,7 @@
     package="com.imperium.academio">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="false"
@@ -11,6 +12,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AuthTheme">
+        <activity android:name=".Showvideo" />
         <activity android:name=".ClassRegister" />
         <activity android:name=".MainMenu" />
         <activity android:name=".Register" />
@@ -24,6 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".MaterialVideoView" />
 
         <meta-data
             android:name="preloaded_fonts"

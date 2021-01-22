@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_margin="10dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MaterialVideoView">
+
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="240dp"
+        android:backgroundTint="@android:color/black"/>
+    <EditText
+        android:id="@+id/video_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Video name"
+        android:textSize="20sp"
+        android:layout_margin="10dp"
+        android:backgroundTint="@color/grey_200"
+        android:textColor="@android:color/black"
+        android:autoText="true"/>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Choose Video"
+        android:clickable="true"
+        android:onClick="ChooseVideo"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:focusable="true" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Video"
+        android:clickable="true"
+        android:onClick="ShowVideo"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:focusable="true" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/upload_button"
+        android:layout_margin="20dp"
+        android:text="upload"/>
+
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/red"
+        android:visibility="invisible"/>
+
+</LinearLayout>
+
+
