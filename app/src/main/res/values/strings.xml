@@ -38,6 +38,8 @@
     <string name="refresh">refresh</string>
     <string name="material_choose_device">Select Material</string>
     <string name="enter_year">Enter year:</string>
+    <string name="exo_fullscreen_enter">Enter fullscreen</string>
+    <string name="exo_fullscreen_exit">Exit fullscreen</string>
     <string-array name="months">
         <item>JAN</item>
         <item>FEB</item>

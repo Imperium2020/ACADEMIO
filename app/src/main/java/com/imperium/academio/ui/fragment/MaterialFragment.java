@@ -1,5 +1,6 @@
 package com.imperium.academio.ui.fragment;
 
+import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -17,6 +19,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
 import com.google.firebase.auth.FirebaseAuth;
@@ -31,6 +34,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.imperium.academio.CustomUtil;
 import com.imperium.academio.Login;
+import com.imperium.academio.MaterialVideoView;
 import com.imperium.academio.R;
 import com.imperium.academio.databinding.FragmentMaterialBinding;
 import com.imperium.academio.fireclass.MaterialHelperClass;
@@ -164,17 +168,10 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
 
         // Create adapters
         topicRvAdapter = new MaterialTopicRvAdapter(activity, topicItems);
-        itemRvAdapter = new MaterialItemRvAdapter(binding.materialItem, activity, items);
+        itemRvAdapter = new MaterialItemRvAdapter(activity, items);
 
-        // set recyclerview properties
-        binding.materialTopic.setHasFixedSize(true);
-        binding.materialItem.setHasFixedSize(true);
-        binding.materialTopic.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.HORIZONTAL, false));
-        binding.materialItem.setLayoutManager(new LinearLayoutManager(activity, LinearLayoutManager.VERTICAL, false));
-
-        // Attach adapter
-        binding.materialTopic.setAdapter(topicRvAdapter);
-        binding.materialItem.setAdapter(itemRvAdapter);
+        prepareAdapter(binding.materialTopic, topicRvAdapter, LinearLayoutManager.HORIZONTAL);
+        prepareAdapter(binding.materialItem, itemRvAdapter, LinearLayoutManager.VERTICAL);
 
         // Create and attach listener to topic recyclerview
         topicRvAdapter.setOnTopicItemClickListener((itemView, position) -> {
@@ -189,43 +186,56 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
             if (chipId == View.NO_ID) {
                 selectedType = null;
             } else {
-                Chip chip = binding.materialType.findViewById(chipId);
+                Chip chip = group.findViewById(chipId);
                 selectedType = chip.getText().toString();
             }
             refresh();
         });
 
         // Create and attach listener to material item recyclerview
-        itemRvAdapter.setOnItemClickListener((itemView, position) -> {
-            MaterialItemRvModel item = items.get(position);
-            String title = item.getTitle();
-            MaterialHelperClass material = null;
-            for (MaterialHelperClass mat : dbItems) {
-                if (title.equals(mat.title)) {
-                    material = mat;
-                    break;
+        itemRvAdapter.setOnItemClickListener(new MaterialItemRvAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                MaterialHelperClass material = getDbItem(position);
+                if (material == null) return;
+                switch (material.getType()) {
+                    case "Links":
+                    case "Alerts":
+                        AlertDialog dialog = buildTextDialog(material);
+                        dialog.show();
+                        break;
+                    case "Notes":
+                        broadcastIntent(material);
+                        break;
+                    case "Videos":
+                        if (material.link == null) return;
+                        Intent videoIntent = new Intent(activity, MaterialVideoView.class);
+                        videoIntent.putExtra("uriString", material.getLink());
+                        videoIntent.putExtra("title", material.title);
+                        videoIntent.putExtra("text", material.text);
+                        startActivity(videoIntent);
+                        break;
+
+                    default:
+                        break;
                 }
-            }
-            if (material == null || material.type.equals("Alerts") || material.link == null)
-                return;
 
-            Intent viewIntent = new Intent(Intent.ACTION_VIEW);
-            viewIntent.setData(Uri.parse(material.getLink()));
-
-            String chooser_title = "Select an app for viewing";
-            Intent chooser = Intent.createChooser(viewIntent, chooser_title);
-
-            try {
-                startActivity(chooser);
-            } catch (ActivityNotFoundException e) {
-                Toast.makeText(activity, "Could not find app", Toast.LENGTH_SHORT).show();
             }
 
+            @Override
+            public void onItemLongPressed(View itemView, int position) {
+                // If not teacher, do nothing
+                if (!userId.equals(teacherId)) return;
+                MaterialHelperClass material = getDbItem(position);
+
+                if (material == null) return;
+                AlertDialog alertDialog = buildDeleteDialog(material);
+                alertDialog.show();
+            }
         });
 
         // Add material button listener
         binding.materialAddItem.setOnClickListener(item -> {
-            if (topicItems.size() <= 0) return;
             MaterialDialogFragment fragment = MaterialDialogFragment.newInstance(this, topicItems);
             fragment.show(activity.getSupportFragmentManager(), "addMaterial");
         });
@@ -236,6 +246,34 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
         binding.materialItemSwipe.setOnRefreshListener(this::refresh);
 
         handler.postDelayed(this::refresh, 600);
+    }
+
+    private AlertDialog buildDeleteDialog(MaterialHelperClass material) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+
+        builder.setTitle("Delete");
+        builder.setMessage("Are you sure you want to delete this material ?" +
+                "\nTitle: " + material.getTitle());
+        builder.setPositiveButton("yes", (dialogInterface, i) -> deleteMaterial(material));
+
+        builder.setNegativeButton("No", (dialogInterface, i) -> dialogInterface.dismiss());
+        return builder.create();
+    }
+
+    private AlertDialog buildTextDialog(MaterialHelperClass material) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        TextView showText = new TextView(builder.getContext());
+        if (material.link != null) {
+            showText.setText(material.text.concat("\n\nLink: " + material.getLink()));
+            builder.setPositiveButton("Visit Link", (di, i) -> broadcastIntent(material));
+        } else {
+            showText.setText(material.text);
+        }
+        showText.setTextIsSelectable(true);
+        builder.setView(showText);
+        builder.setTitle(material.getTitle());
+        builder.setCancelable(true);
+        return builder.create();
     }
 
 
@@ -253,16 +291,15 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
             UploadTask uploadTask = mStorage.putStream(fileStream);
 
             uploadTask.continueWithTask(task -> {
-                if (!task.isSuccessful()) {
+                if (!task.isSuccessful() && task.getException() != null) {
                     throw task.getException();
                 }
 
                 // Continue with the task to get the download URL
                 return mStorage.getDownloadUrl();
             }).addOnCompleteListener(task -> {
-                if (task.isSuccessful()) {
-                    Uri downloadUri = task.getResult();
-                    String dbLink = downloadUri.toString();
+                if (task.isSuccessful() && task.getResult() != null) {
+                    String dbLink = task.getResult().toString();
                     createMaterial(classId, dbLink, text, title, topic, type);
                 } else {
                     Toast.makeText(activity, "Upload got interrupted.", Toast.LENGTH_SHORT).show();
@@ -271,6 +308,32 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
         } catch (FileNotFoundException fnf) {
             Toast.makeText(activity, "File Not Found!", Toast.LENGTH_SHORT).show();
             Log.d("MaterialFragment", "onSubmit(Uri): File Not Found", fnf);
+        }
+    }
+
+    private void prepareAdapter(RecyclerView recyclerView, RecyclerView.Adapter<?> holder, int orientation) {
+        // set recyclerview properties
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(activity, orientation, false));
+        // Attach adapter
+        recyclerView.setAdapter(holder);
+    }
+
+    private void broadcastIntent(MaterialHelperClass material) {
+        if (material.link == null) return;
+        String chooser_title = "Select an app for viewing";
+        Intent viewIntent = new Intent(Intent.ACTION_VIEW);
+        try {
+            Uri uri = Uri.parse(material.getLink());
+            viewIntent.setData(uri);
+            Intent chooser = Intent.createChooser(viewIntent, chooser_title);
+            startActivity(chooser);
+        } catch (Exception e) {
+            if (e instanceof ActivityNotFoundException)
+                Toast.makeText(activity, "Could not find app", Toast.LENGTH_SHORT).show();
+            else
+                Toast.makeText(activity, "Some Error Occurred!", Toast.LENGTH_SHORT).show();
+            Log.e("MaterialFragment", "onItemClick: ", e);
         }
     }
 
@@ -283,13 +346,42 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
         materials.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                String message = "This Material Title already exist! Please use another title";
                 if (!snapshot.exists()) {
                     // add material to list of materials in db
                     materials.child(key).setValue(materialObject);
-                    message = "Creating material: " + title;
+                    Toast.makeText(activity, "Creating material: " + title,
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(activity,
+                            "This Material Title already exist! Please use another title",
+                            Toast.LENGTH_SHORT).show();
                 }
-                Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
+    }
+
+    private void deleteMaterial(MaterialHelperClass material) {
+        List<String> storageType = Arrays.asList("Videos", "Notes");
+        String key = material.generateKey();
+
+        materials.child(key).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    MaterialHelperClass item = snapshot.getValue(MaterialHelperClass.class);
+                    if (item == null) return;
+                    if (storageType.contains(item.getLink())) {
+                        classStorage.child(key).delete()
+                                .addOnSuccessListener(a -> materials.child(key).removeValue());
+                    } else {
+                        materials.child(key).removeValue();
+                    }
+                    refresh();
+                }
             }
 
             @Override
@@ -385,14 +477,17 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
             }
         };
     }
+
+    private MaterialHelperClass getDbItem(int position) {
+        MaterialHelperClass material = null;
+        MaterialItemRvModel item = items.get(position);
+        String title = item.getTitle();
+        for (MaterialHelperClass mat : dbItems) {
+            if (title.equals(mat.title)) {
+                material = mat;
+                break;
+            }
+        }
+        return material;
+    }
 }
-
-
-
-
-
-
-
-
-
-
