@@ -15,8 +15,8 @@
 
     <ImageView
         android:id="@+id/material_item_icon"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:layout_gravity="start"
         android:layout_margin="5dp"
         android:contentDescription="@string/icon"

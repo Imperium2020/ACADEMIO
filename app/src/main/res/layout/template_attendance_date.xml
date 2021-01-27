@@ -7,8 +7,7 @@
         android:id="@+id/attendance_card_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="1dp"
-        android:elevation="3dp"
+        android:elevation="0dp"
         app:cardBackgroundColor="@color/light_green"
         tools:layout_height="50dp"
         tools:layout_width="50dp">
@@ -19,6 +18,7 @@
             android:layout_height="match_parent"
             android:layout_marginHorizontal="5dp"
             android:layout_marginVertical="5dp"
+            android:textColor="@color/white"
             android:background="@color/transparent"
             android:gravity="center"
             android:textSize="18sp"

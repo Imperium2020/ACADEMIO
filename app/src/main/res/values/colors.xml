@@ -5,10 +5,10 @@
 
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
-    <color name="yellow">#FDD835</color>
+    <color name="yellow">#3AA8C1</color>
     <color name="red">#D31F1F</color>
-    <color name="light_red">#FF9090</color>
-    <color name="light_green">#90EC90</color>
-    <color name="light_blue">#9090EC</color>
+    <color name="light_red">#E52D27</color>
+    <color name="light_green">#1F2212</color>
+    <color name="light_blue">#0009FF</color>
     <color name="transparent">#00000000</color>
 </resources>
