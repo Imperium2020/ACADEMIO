@@ -11,4 +11,5 @@
     <color name="light_green">#90EC90</color>
     <color name="light_blue">#9090EC</color>
     <color name="transparent">#00000000</color>
+    <color name="translucent_white">#BEFFFFFF</color>
 </resources>

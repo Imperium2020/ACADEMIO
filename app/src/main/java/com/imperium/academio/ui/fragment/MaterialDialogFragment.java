@@ -4,14 +4,17 @@ import android.app.Dialog;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.MediaController;
 import android.widget.Spinner;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -38,6 +41,7 @@ public class MaterialDialogFragment extends DialogFragment {
     SubmitListener listener;
     ActivityResultLauncher<String> mGetContent;
     Uri mFileURI;
+    VideoView videoView;
 
     public MaterialDialogFragment() {
         // Empty constructor required for DialogFragment
@@ -134,16 +138,21 @@ public class MaterialDialogFragment extends DialogFragment {
         mGetContent = registerForActivityResult(new ActivityResultContracts.GetContent(),
                 uri -> {
                     // Handle the returned Uri
-                    if (uri == null) return;
+                    if (uri == null || selectedType == null) return;
                     mFileURI = uri;
                     binding.inpMaterialNoteTxt.setText(uri.getPath());
+                    if (selectedType.equals("Videos"))
+                        attachVideoView(uri);
                 }
         );
 
         // attaching chooser to button
         binding.inpMaterialNote.setOnClickListener(view1 -> {
             if (selectedType == null) return;
-            mGetContent.launch("*/*");
+            if (selectedType.equals("Videos")) {
+                mGetContent.launch("video/*");
+            } else
+                mGetContent.launch("*/*");
         });
 
         // on submit button
@@ -225,19 +234,20 @@ public class MaterialDialogFragment extends DialogFragment {
 
         void onSubmit(String type, String title, String topic, String text, Uri link);
     }
+
+    private void attachVideoView(Uri uri) {
+        videoView = binding.materialDisplay;
+        videoView.setVisibility(View.VISIBLE);
+        videoView.setVideoURI(uri);
+        MediaController controller = new MediaController(getActivity());
+        controller.show();
+        if (controller.isShowing())
+            Log.d("Controller", "attachVideoView: showing");
+        videoView.setMediaController(controller);
+        videoView.start();
+        videoView.postDelayed(() -> {
+            if (videoView != null && videoView.isPlaying())
+                videoView.stopPlayback();
+        }, 10000);
+    }
 }
-
-/*
-"@+id/inp_material_title" (submit)
-"@+id/inp_material_type_spinner" (choose fields and submit)
-"@+id/inp_material_topic" (submit)
-"@+id/inp_material_topic_text" (auto fill)
-
-"@+id/inp_material_link" (if type link, show and submit)
-"@+id/inp_material_note_txt" (if type note or video, show and submit)
-"@+id/inp_material_note" (if note/video, button to get material)
-
-"@+id/inp_material_text" ( text )
-"@+id/material_dialog_cancel"
-"@+id/material_dialog_submit"
-*/
