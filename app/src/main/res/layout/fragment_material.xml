@@ -39,7 +39,7 @@
             app:layout_constraintTop_toBottomOf="@id/material_topic"
             app:singleLine="true"
             app:singleSelection="true"
-            tools:background="@color/grey_200"
+            tools:background="@color/silver"
             tools:layout_height="50dp"
             tools:listitem="@layout/template_choice_chip" />
 
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:indeterminate="true"
             android:indeterminateTint="@color/black"
-            android:visibility="invisible"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/material_type"

@@ -156,11 +156,13 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
             typeCount = materialTypes.size();
         else return;
 
+        int width = binding.materialType.getWidth();
         for (int i = 0; i < typeCount; i++) {
             // Inflate chip and set values
             Chip typeChip = (Chip) getLayoutInflater().inflate(R.layout.template_choice_chip, binding.materialType, false);
             typeChip.setText(materialTypes.get(i));
             typeChip.setChipIconResource(materialTypeIcons.get(i));
+            typeChip.setWidth(width / (typeCount));
 
             // Add inflated chip to chipGroup
             binding.materialType.addView(typeChip);
@@ -269,6 +271,7 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
         } else {
             showText.setText(material.text);
         }
+        showText.setPadding(getDp(24), getDp(5), getDp(12), getDp(10));
         showText.setTextIsSelectable(true);
         builder.setView(showText);
         builder.setTitle(material.getTitle());
@@ -284,6 +287,7 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
 
     @Override
     public void onSubmit(String type, String title, String topic, String text, Uri link) {
+        binding.progressbar.setVisibility(View.VISIBLE);
         // get reference link and attach link to material object link
         StorageReference mStorage = classStorage.child(CustomUtil.SHA1(title));
         try {
@@ -351,6 +355,7 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
                     materials.child(key).setValue(materialObject);
                     Toast.makeText(activity, "Creating material: " + title,
                             Toast.LENGTH_SHORT).show();
+                    binding.progressbar.setVisibility(View.GONE);
                 } else {
                     Toast.makeText(activity,
                             "This Material Title already exist! Please use another title",
@@ -489,5 +494,10 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
             }
         }
         return material;
+    }
+
+    private int getDp(int dp) {
+        float scale = getResources().getDisplayMetrics().density;
+        return (int) (dp * scale + 0.5f);
     }
 }

@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="grey_200">#C8C8C8</color>
-    <color name="grey_100">#646464</color>
-
-    <color name="black">#000000</color>
-    <color name="white">#FFFFFF</color>
-    <color name="yellow">#3AA8C1</color>
-    <color name="red">#D31F1F</color>
-    <color name="light_red">#E52D27</color>
-    <color name="light_green">#1F2212</color>
-    <color name="light_blue">#0009FF</color>
     <color name="transparent">#00000000</color>
+    <color name="black">#000000</color>
+    <color name="hunter_green">#1d1d1d</color>
     <color name="translucent_white">#BEFFFFFF</color>
+    <color name="silver">#C8C8C8</color>
+    <color name="white">#FFFFFF</color>
+    <color name="light_green">#90EC90</color>
+    <color name="moonstone">#3AA8C1</color>
+    <color name="crystal_blue">#68A0B0</color>
+    <color name="candy_red">#D31F1F</color>
+    <color name="red">#FF0000</color>
+
 </resources>

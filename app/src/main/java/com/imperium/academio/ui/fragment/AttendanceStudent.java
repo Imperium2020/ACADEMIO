@@ -45,15 +45,16 @@ public class AttendanceStudent extends Fragment {
     String classId;
     String userId;
     List<Long> absentList;
+    List<Long> sessionList;
 
     public AttendanceStudent() {
         // Required empty public constructor
     }
 
     public static AttendanceStudent newInstance(Bundle args) {
-        AttendanceStudent fragement = new AttendanceStudent();
-        fragement.setArguments(args);
-        return fragement;
+        AttendanceStudent fragment = new AttendanceStudent();
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
@@ -85,6 +86,7 @@ public class AttendanceStudent extends Fragment {
 
         selectedClass = FirebaseDatabase.getInstance().getReference("class/" + classId);
         absentList = new ArrayList<>();
+        sessionList = new ArrayList<>();
         fetchAttendanceSheet();
 
         // Temporarily fill progress bar
@@ -109,7 +111,7 @@ public class AttendanceStudent extends Fragment {
                 // setting table heading
                 if (i == 0) {
                     cardView.setCardElevation(10);
-                    cardView.setCardBackgroundColor(getColor(R.color.yellow));
+                    cardView.setCardBackgroundColor(getColor(R.color.crystal_blue));
                     card.attendanceDateText.setText(shortWeekDays[j + 1]);
                 }
             }
@@ -135,17 +137,17 @@ public class AttendanceStudent extends Fragment {
             int year = Integer.parseInt(y);
             int month = mArray.indexOf(m);
 
-            // get List of absent dates from database for month
-            List<Integer> absentDates = getAbsentDates(year, month);
-
             // call function to draw table
-            setTable(table, absentDates, month, year);
+            setTable(table, month, year);
         });
     }
 
     // fill table with data
-    public void setTable(TableLayout table, List<Integer> absentDates, Integer month, Integer year) {
-        Set<Integer> absentDateSet = new HashSet<>(absentDates);
+    public void setTable(TableLayout table, Integer month, Integer year) {
+        // get Set of absent dates, and sessions from database for month
+        Set<Integer> absentDateSet = new HashSet<>(getDatesInRange(absentList, year, month));
+        Set<Integer> sessionDateSet = new HashSet<>(getDatesInRange(sessionList, year, month));
+
         Calendar calInstance = Calendar.getInstance();
         int currYear = calInstance.get(Calendar.YEAR);
         int currMonth = calInstance.get(Calendar.MONTH);
@@ -165,9 +167,11 @@ public class AttendanceStudent extends Fragment {
 
 
         // Colors
-        int lightRed = getColor(R.color.light_red);
-        int lightBlue = getColor(R.color.light_blue);
-        int lightGreen = getColor(R.color.light_green);
+        int black = getColor(R.color.black);
+        int sessionColor = getColor(R.color.hunter_green);
+        int absentColor = getColor(R.color.candy_red);
+        int todayColor = getColor(R.color.moonstone);
+        int white = getColor(R.color.white);
 
         // Looping through the table
         for (int i = 1; i < table.getChildCount(); i++) {
@@ -181,7 +185,7 @@ public class AttendanceStudent extends Fragment {
                 TextView text = (TextView) card.getChildAt(0);
 
                 // per date logic
-                card.setCardBackgroundColor(lightGreen);
+                card.setCardBackgroundColor(white);
                 if ((i == 1 && j < startSpace) || (dateCounter > maxDate)) {
                     // no date in element
                     date = " ";
@@ -192,10 +196,21 @@ public class AttendanceStudent extends Fragment {
                     if (j == 0 || j == startSpace) row.setVisibility(View.VISIBLE);
 
                     // set color if the date is today
-                    if (dateCounter == today) card.setCardBackgroundColor(lightBlue);
-                    // absent takes precedence over today
-                    if (absentDateSet.contains(dateCounter)) card.setCardBackgroundColor(lightRed);
+                    if (dateCounter == today) {
+                        card.setCardBackgroundColor(todayColor);
+                        text.setTextColor(white);
+                    }
+                    // set color if session occurred on date
+                    if (sessionDateSet.contains(dateCounter)) {
+                        card.setCardBackgroundColor(sessionColor);
+                        text.setTextColor(white);
+                    }
 
+                    // set color if the student is absent on date
+                    if (absentDateSet.contains(dateCounter)) {
+                        card.setCardBackgroundColor(absentColor);
+                        text.setTextColor(black);
+                    }
                     date = String.valueOf(dateCounter++);
                 }
                 text.setText(date);
@@ -214,8 +229,12 @@ public class AttendanceStudent extends Fragment {
                 if (absentList == null || !absentList.isEmpty())
                     absentList = new ArrayList<>();
 
+                if (sessionList == null || !sessionList.isEmpty())
+                    sessionList = new ArrayList<>();
+
                 for (Map.Entry<String, Boolean> session : currentClass.sessions.entrySet()) {
                     String date = session.getKey();
+                    sessionList.add(Long.parseLong(date));
                     String attendanceKey = CustomUtil.SHA1(userId + date);
                     AttendanceHelperClass record = currentClass.attendance.get(attendanceKey);
                     if (record != null) {
@@ -224,7 +243,7 @@ public class AttendanceStudent extends Fragment {
                 }
 
                 // Set progress bar
-                int sessionCount = currentClass.sessions.size();
+                int sessionCount = sessionList.size();
                 int percent = sessionCount - absentList.size();
                 setProgress(percent, sessionCount);
             }
@@ -236,8 +255,8 @@ public class AttendanceStudent extends Fragment {
         });
     }
 
-    private List<Integer> getAbsentDates(int year, int month) {
-        if (absentList.isEmpty()) {
+    private List<Integer> getDatesInRange(List<Long> dateList, int year, int month) {
+        if (dateList.isEmpty()) {
             fetchAttendanceSheet();
             return Collections.emptyList();
         }
@@ -253,14 +272,14 @@ public class AttendanceStudent extends Fragment {
         long maxTime = cal.getTimeInMillis();
 
         // Filter absentList to get dates of selected range
-        List<Integer> absentDatesInMonth = new ArrayList<>();
-        for (long date : absentList) {
+        List<Integer> datesInRange = new ArrayList<>();
+        for (long date : dateList) {
             if (minTime <= date && date < maxTime) {
                 cal.setTimeInMillis(date);
-                absentDatesInMonth.add(cal.get(Calendar.DATE));
+                datesInRange.add(cal.get(Calendar.DATE));
             }
         }
-        return absentDatesInMonth;
+        return datesInRange;
     }
 
     private void setProgress(int present, int sessionCount) {
