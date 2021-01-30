@@ -154,7 +154,7 @@ class MaterialVideoView : AppCompatActivity() {
     @Suppress("DEPRECATION")
     private fun setSystemUI(boolean: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            window.setDecorFitsSystemWindows(boolean)
+            window.setDecorFitsSystemWindows(true)
         } else {
             if (boolean) {
                 window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE

@@ -23,7 +23,7 @@ class ClassDialogFragment : DialogFragment() {
         val window = dialog?.window ?: return
 
         // Resize dialog according to space available
-        window.attributes.apply {
+        window.attributes = window.attributes.apply {
             width = WindowManager.LayoutParams.MATCH_PARENT
             height = WindowManager.LayoutParams.WRAP_CONTENT
         }
