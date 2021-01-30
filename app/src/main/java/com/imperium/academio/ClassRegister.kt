@@ -63,7 +63,6 @@ class ClassRegister : AppCompatActivity(), ClassDialogFragment.ClassSubmitListen
                             intent.putExtra("userId", userId)
                             intent.putExtra("classId", cList[position].key)
                         })
-                        finish()
                     }
                 }
         )
