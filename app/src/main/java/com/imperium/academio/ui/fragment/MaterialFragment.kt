@@ -1,7 +1,7 @@
 package com.imperium.academio.ui.fragment
 
 import android.app.AlertDialog
-import android.content.ActivityNotFoundException
+import android.content.ContentResolver
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -11,6 +11,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.webkit.MimeTypeMap
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -21,6 +22,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageMetadata
 import com.google.firebase.storage.StorageReference
 import com.google.firebase.storage.UploadTask
 import com.imperium.academio.CustomUtil.SHA1
@@ -36,6 +38,9 @@ import com.imperium.academio.ui.fragment.MaterialDialogFragment.Companion.newIns
 import com.imperium.academio.ui.model.MaterialItemRvModel
 import com.imperium.academio.ui.model.MaterialTopicRvModel
 import java.io.FileNotFoundException
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 class MaterialFragment : Fragment(), MaterialDialogFragment.SubmitListener {
     private lateinit var binding: FragmentMaterialBinding
@@ -240,6 +245,10 @@ class MaterialFragment : Fragment(), MaterialDialogFragment.SubmitListener {
                 if (!task.isSuccessful && task.exception != null) {
                     throw Throwable(task.exception)
                 }
+                getMimeType(link)?.let {
+                    mStorage.updateMetadata(StorageMetadata.Builder().setContentType(it).build())
+                }
+                // Return url
                 mStorage.downloadUrl
             }.addOnCompleteListener { task: Task<Uri?> ->
                 if (task.isSuccessful && task.result != null) {
@@ -266,16 +275,27 @@ class MaterialFragment : Fragment(), MaterialDialogFragment.SubmitListener {
     private fun broadcastIntent(material: MaterialHelperClass) {
         if (material.link == null) return
         val viewIntent = Intent(Intent.ACTION_VIEW)
-        try {
-            val uri = Uri.parse(material.link)
-            viewIntent.data = uri
-            val chooser = Intent.createChooser(viewIntent, "Select an app for viewing")
-            startActivity(chooser)
-        } catch (e: Exception) {
-            requireActivity()
-                    .toast(if (e is ActivityNotFoundException) "Some Error Occurred!"
-                    else "Could not find app")
-            Log.e("MaterialFragment", "onItemClick: ", e)
+        val chooserTitle = "Select an app for viewing"
+        if (material.type == "Link") {
+            viewIntent.data = Uri.parse(material.getLink())
+            startActivity(Intent.createChooser(viewIntent, chooserTitle))
+            return
+        }
+        val mStorage = classStorage.child(SHA1(material.title))
+        mStorage.metadata.addOnSuccessListener { storageMetadata: StorageMetadata ->
+            try {
+                val uri = Uri.parse(material.getLink())
+                if (storageMetadata.contentType != null) {
+                    viewIntent.setDataAndType(uri, storageMetadata.contentType)
+                } else {
+                    viewIntent.data = uri
+                }
+                val chooser = Intent.createChooser(viewIntent, chooserTitle)
+                startActivity(chooser)
+            } catch (e: Exception) {
+                activity?.toast("Could not find app")
+                Log.e("MaterialFragment", "onItemClick: ", e)
+            }
         }
     }
 
@@ -408,6 +428,18 @@ class MaterialFragment : Fragment(), MaterialDialogFragment.SubmitListener {
 
     private fun getDp(dp: Int): Int {
         return (dp * resources.displayMetrics.density + 0.5f).toInt()
+    }
+
+    private fun getMimeType(uri: Uri): String? {
+        val mimeType: String?
+        mimeType = if (ContentResolver.SCHEME_CONTENT == uri.scheme) {
+            val cr = requireActivity().applicationContext.contentResolver
+            cr.getType(uri)
+        } else {
+            val fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri.toString())
+            MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileExtension.toLowerCase(Locale.getDefault()))
+        }
+        return mimeType
     }
 
     companion object {
