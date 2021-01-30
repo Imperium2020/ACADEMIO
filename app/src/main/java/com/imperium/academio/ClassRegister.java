@@ -71,7 +71,6 @@ public class ClassRegister extends AppCompatActivity implements ClassDialogFragm
             intent.putExtra("classId", cList.get(position).getKey());
             intent.putExtra("userId", userId);
             startActivity(intent);
-            finish();
         });
 
 

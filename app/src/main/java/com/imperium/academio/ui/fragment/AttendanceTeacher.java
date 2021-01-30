@@ -147,6 +147,7 @@ public class AttendanceTeacher extends Fragment {
 
             selectedClass.child("attendance").updateChildren(absent);
             selectedClass.child("sessions/" + timestamp).setValue(true);
+            Toast.makeText(activity, "Submitted attendance record", Toast.LENGTH_SHORT).show();
         });
     }
 

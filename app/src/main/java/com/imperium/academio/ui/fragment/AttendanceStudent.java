@@ -129,6 +129,7 @@ public class AttendanceStudent extends Fragment {
         binding.inpAttendanceMonth.setText(months.get(cal.get(Calendar.MONTH)));
 
         binding.btnAttendanceGet.setOnClickListener(view1 -> {
+            fetchAttendanceSheet();
             String y = CustomUtil.validateField(binding.attendanceYear, "year");
             String m = CustomUtil.validateField(binding.attendanceMonth, "text");
             List<String> mArray = Arrays.asList(getResources().getStringArray(R.array.months));
