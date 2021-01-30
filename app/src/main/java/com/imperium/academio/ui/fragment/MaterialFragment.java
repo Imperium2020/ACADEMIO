@@ -2,6 +2,7 @@ package com.imperium.academio.ui.fragment;
 
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +32,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.imperium.academio.CustomUtil;
@@ -299,6 +302,13 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
                     throw task.getException();
                 }
 
+                String mimeType = getMimeType(link);
+                if (mimeType != null) {
+                    mStorage.updateMetadata(new StorageMetadata.Builder()
+                            .setContentType(mimeType)
+                            .build()
+                    );
+                }
                 // Continue with the task to get the download URL
                 return mStorage.getDownloadUrl();
             }).addOnCompleteListener(task -> {
@@ -324,21 +334,36 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
     }
 
     private void broadcastIntent(MaterialHelperClass material) {
-        if (material.link == null) return;
+        if (material.link == null || material.title == null) return;
         String chooser_title = "Select an app for viewing";
         Intent viewIntent = new Intent(Intent.ACTION_VIEW);
-        try {
-            Uri uri = Uri.parse(material.getLink());
-            viewIntent.setData(uri);
-            Intent chooser = Intent.createChooser(viewIntent, chooser_title);
-            startActivity(chooser);
-        } catch (Exception e) {
-            if (e instanceof ActivityNotFoundException)
-                Toast.makeText(activity, "Could not find app", Toast.LENGTH_SHORT).show();
-            else
-                Toast.makeText(activity, "Some Error Occurred!", Toast.LENGTH_SHORT).show();
-            Log.e("MaterialFragment", "onItemClick: ", e);
+
+        if (material.type.equals("Link")) {
+            viewIntent.setData(Uri.parse(material.getLink()));
+            startActivity(Intent.createChooser(viewIntent, chooser_title));
+            return;
         }
+
+        StorageReference mStorage = classStorage.child(CustomUtil.SHA1(material.title));
+        mStorage.getMetadata().addOnSuccessListener(storageMetadata -> {
+            try {
+                Uri uri = Uri.parse(material.getLink());
+                if (storageMetadata.getContentType() != null) {
+                    viewIntent.setDataAndType(uri, storageMetadata.getContentType());
+                } else {
+                    viewIntent.setData(uri);
+                }
+                Intent chooser = Intent.createChooser(viewIntent, chooser_title);
+                startActivity(chooser);
+            } catch (Exception e) {
+                if (e instanceof ActivityNotFoundException)
+                    Toast.makeText(activity, "Could not find app", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(activity, "Some Error Occurred!", Toast.LENGTH_SHORT).show();
+                Log.e("MaterialFragment", "onItemClick: ", e);
+            }
+
+        });
     }
 
     // create material function
@@ -499,5 +524,19 @@ public class MaterialFragment extends Fragment implements MaterialDialogFragment
     private int getDp(int dp) {
         float scale = getResources().getDisplayMetrics().density;
         return (int) (dp * scale + 0.5f);
+    }
+
+    private String getMimeType(Uri uri) {
+        String mimeType;
+        if (ContentResolver.SCHEME_CONTENT.equals(uri.getScheme())) {
+            ContentResolver cr = activity.getApplicationContext().getContentResolver();
+            mimeType = cr.getType(uri);
+        } else {
+            String fileExtension = MimeTypeMap.getFileExtensionFromUrl(uri
+                    .toString());
+            mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(
+                    fileExtension.toLowerCase());
+        }
+        return mimeType;
     }
 }
