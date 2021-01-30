@@ -95,6 +95,8 @@ class AttendanceStudent : Fragment() {
                     activity, android.R.layout.simple_list_item_1, months))
             inpAttendanceMonth.setText(months[cal[Calendar.MONTH]])
             btnAttendanceGet.setOnClickListener {
+                fetchAttendanceSheet()
+
                 val y = validateField(binding.attendanceYear, "year")
                 val m = validateField(binding.attendanceMonth, "text")
                 val mArray = listOf(*resources.getStringArray(R.array.months))

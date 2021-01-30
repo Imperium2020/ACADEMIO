@@ -114,6 +114,7 @@ class AttendanceTeacher : Fragment() {
                 child("attendance").updateChildren(absent)
                 child("sessions/$timestamp").setValue(true)
             }
+            Toast.makeText(activity, "Submitted attendance record", Toast.LENGTH_SHORT).show()
         }
     }
 
