@@ -5,12 +5,10 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/attendance_card_item"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:elevation="0dp"
-        app:cardCornerRadius="0dp"
-        tools:layout_height="50dp"
-        tools:layout_width="50dp">
+        app:cardCornerRadius="0dp">
 
         <TextView
             android:id="@+id/attendance_date_text"

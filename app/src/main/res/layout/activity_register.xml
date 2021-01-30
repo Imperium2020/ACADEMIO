@@ -13,6 +13,7 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="140dp"
+            android:layout_gravity="center"
             android:contentDescription="@string/todo"
             android:src="@drawable/pp" />
 
