@@ -192,6 +192,7 @@ public class AttendanceStudent extends Fragment {
                     date = " ";
                 } else {
                     // there is a date in the element
+                    text.setTextColor(black);
 
                     // if first element in row, set row as visible
                     if (j == 0 || j == startSpace) row.setVisibility(View.VISIBLE);
